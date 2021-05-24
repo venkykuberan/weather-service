@@ -15,16 +15,13 @@ func WeatherHandler(w http.ResponseWriter, r *http.Request) {
 	lon := r.URL.Query().Get("lon")
 
 	if len(lat) == 0 || len(lon) == 0 {
-		w.WriteHeader(401)
-		w.Write([]byte("Bad URL"))
+		http.Error(w, "Bad URL", 401)
 	} else {
 		weatherDto, err := provider.GetWeatherInfo(URL, os.Getenv("API_KEY"), lat, lon)
 		if err != nil {
 			log.Println("Error fetching current weather information :" + err.Error())
-			w.WriteHeader(500)
-			w.Write([]byte("Call to down stream API failed, please try again later"))
+			http.Error(w, "Call to down stream API failed, please try again later", 500)
 		} else {
-
 			weatherInfo := CurrentWeather{}
 			// map the dto to service response
 			weatherInfo.Lat = weatherDto.Lat
@@ -41,8 +38,7 @@ func WeatherHandler(w http.ResponseWriter, r *http.Request) {
 
 			if err != nil {
 				log.Println("JSON serialization failed :" + err.Error())
-				w.WriteHeader(500)
-				w.Write([]byte("Internal Server Error"))
+				http.Error(w, "Internal Server Error", 500)
 			} else {
 				w.Write(bytes)
 			}

@@ -3,7 +3,6 @@ package provider
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -69,8 +68,6 @@ func getParseResponse(res *http.Response) (*Weatherdto, error) {
 	}
 
 	slurp, err := ioutil.ReadAll(res.Body)
-	fmt.Println(string(slurp))
-
 	if err != nil {
 		return nil, err
 	}
